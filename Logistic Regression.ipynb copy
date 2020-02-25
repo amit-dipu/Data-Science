@@ -1,0 +1,1531 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import numpy as np \n",
+    "import pandas as pd\n",
+    "from sklearn import preprocessing\n",
+    "\n",
+    "import matplotlib.pyplot as plt\n",
+    "import seaborn as sns"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>PassengerId</th>\n",
+       "      <th>Survived</th>\n",
+       "      <th>Pclass</th>\n",
+       "      <th>Name</th>\n",
+       "      <th>Sex</th>\n",
+       "      <th>Age</th>\n",
+       "      <th>SibSp</th>\n",
+       "      <th>Parch</th>\n",
+       "      <th>Ticket</th>\n",
+       "      <th>Fare</th>\n",
+       "      <th>Cabin</th>\n",
+       "      <th>Embarked</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>3</td>\n",
+       "      <td>Braund, Mr. Owen Harris</td>\n",
+       "      <td>male</td>\n",
+       "      <td>22.0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>A/5 21171</td>\n",
+       "      <td>7.2500</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>S</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>2</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>\n",
+       "      <td>female</td>\n",
+       "      <td>38.0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>PC 17599</td>\n",
+       "      <td>71.2833</td>\n",
+       "      <td>C85</td>\n",
+       "      <td>C</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>3</td>\n",
+       "      <td>1</td>\n",
+       "      <td>3</td>\n",
+       "      <td>Heikkinen, Miss. Laina</td>\n",
+       "      <td>female</td>\n",
+       "      <td>26.0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>STON/O2. 3101282</td>\n",
+       "      <td>7.9250</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>S</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>4</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>Futrelle, Mrs. Jacques Heath (Lily May Peel)</td>\n",
+       "      <td>female</td>\n",
+       "      <td>35.0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>113803</td>\n",
+       "      <td>53.1000</td>\n",
+       "      <td>C123</td>\n",
+       "      <td>S</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>5</td>\n",
+       "      <td>0</td>\n",
+       "      <td>3</td>\n",
+       "      <td>Allen, Mr. William Henry</td>\n",
+       "      <td>male</td>\n",
+       "      <td>35.0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>373450</td>\n",
+       "      <td>8.0500</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>S</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   PassengerId  Survived  Pclass  \\\n",
+       "0            1         0       3   \n",
+       "1            2         1       1   \n",
+       "2            3         1       3   \n",
+       "3            4         1       1   \n",
+       "4            5         0       3   \n",
+       "\n",
+       "                                                Name     Sex   Age  SibSp  \\\n",
+       "0                            Braund, Mr. Owen Harris    male  22.0      1   \n",
+       "1  Cumings, Mrs. John Bradley (Florence Briggs Th...  female  38.0      1   \n",
+       "2                             Heikkinen, Miss. Laina  female  26.0      0   \n",
+       "3       Futrelle, Mrs. Jacques Heath (Lily May Peel)  female  35.0      1   \n",
+       "4                           Allen, Mr. William Henry    male  35.0      0   \n",
+       "\n",
+       "   Parch            Ticket     Fare Cabin Embarked  \n",
+       "0      0         A/5 21171   7.2500   NaN        S  \n",
+       "1      0          PC 17599  71.2833   C85        C  \n",
+       "2      0  STON/O2. 3101282   7.9250   NaN        S  \n",
+       "3      0            113803  53.1000  C123        S  \n",
+       "4      0            373450   8.0500   NaN        S  "
+      ]
+     },
+     "execution_count": 2,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train_df=pd.read_csv(\"train.csv\")\n",
+    "test_df=pd.read_csv(\"test.csv\")\n",
+    "train_df.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Index(['PassengerId', 'Survived', 'Pclass', 'Name', 'Sex', 'Age', 'SibSp',\n",
+       "       'Parch', 'Ticket', 'Fare', 'Cabin', 'Embarked'],\n",
+       "      dtype='object')"
+      ]
+     },
+     "execution_count": 3,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train_df.columns"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "<class 'pandas.core.frame.DataFrame'>\n",
+      "RangeIndex: 891 entries, 0 to 890\n",
+      "Data columns (total 12 columns):\n",
+      "PassengerId    891 non-null int64\n",
+      "Survived       891 non-null int64\n",
+      "Pclass         891 non-null int64\n",
+      "Name           891 non-null object\n",
+      "Sex            891 non-null object\n",
+      "Age            714 non-null float64\n",
+      "SibSp          891 non-null int64\n",
+      "Parch          891 non-null int64\n",
+      "Ticket         891 non-null object\n",
+      "Fare           891 non-null float64\n",
+      "Cabin          204 non-null object\n",
+      "Embarked       889 non-null object\n",
+      "dtypes: float64(2), int64(5), object(5)\n",
+      "memory usage: 83.6+ KB\n"
+     ]
+    }
+   ],
+   "source": [
+    "train_df.info()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "The number of samples into the train data is 891.\n"
+     ]
+    }
+   ],
+   "source": [
+    "print('The number of samples into the train data is {}.'.format(train_df.shape[0]))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "<b>Data Quality & Missing Value Assessment</b>"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "PassengerId      0\n",
+       "Survived         0\n",
+       "Pclass           0\n",
+       "Name             0\n",
+       "Sex              0\n",
+       "Age            177\n",
+       "SibSp            0\n",
+       "Parch            0\n",
+       "Ticket           0\n",
+       "Fare             0\n",
+       "Cabin          687\n",
+       "Embarked         2\n",
+       "dtype: int64"
+      ]
+     },
+     "execution_count": 6,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train_df.isnull().sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "19.865319865319865"
+      ]
+     },
+     "execution_count": 7,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# percent of missing \"Age\" \n",
+    "(train_df['Age'].isnull().sum()/train_df.shape[0])*100"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "image/png": "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\n",
+      "text/plain": [
+       "<Figure size 432x288 with 1 Axes>"
+      ]
+     },
+     "metadata": {
+      "needs_background": "light"
+     },
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "ax = train_df[\"Age\"].hist(bins=15, density=True, stacked=True, color='teal', alpha=0.6)\n",
+    "train_df[\"Age\"].plot(kind='density', color='teal')\n",
+    "ax.set(xlabel='Age')\n",
+    "plt.xlim(-10,85)\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true
+   },
+   "source": [
+    "Since \"Age\" is (right) skewed, using the mean might give us biased results by filling in ages that are older than desired. To deal with this, we'll use the median to impute the missing values.\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "The mean of \"Age\" is 29.70\n",
+      "The median of \"Age\" is 28.00\n"
+     ]
+    }
+   ],
+   "source": [
+    "# mean age\n",
+    "print('The mean of \"Age\" is %.2f' %(train_df[\"Age\"].mean(skipna=True)))\n",
+    "# median age\n",
+    "print('The median of \"Age\" is %.2f' %(train_df[\"Age\"].median(skipna=True)))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "<b>Cabin - Missing Values</b>"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Percent of missing \"Cabin\" records is 77.10%\n"
+     ]
+    }
+   ],
+   "source": [
+    "# percent of missing \"Cabin\" \n",
+    "print('Percent of missing \"Cabin\" records is %.2f%%' %((train_df['Cabin'].isnull().sum()/train_df.shape[0])*100))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "77% of records are missing, so we will not use this variable"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "<b>Embarked - Missing Values</b>"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Percent of missing \"Embarked\" records is 0.22%\n"
+     ]
+    }
+   ],
+   "source": [
+    "# percent of missing \"Embarked\" \n",
+    "print('Percent of missing \"Embarked\" records is %.2f%%' %((train_df['Embarked'].isnull().sum()/train_df.shape[0])*100))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "S    644\n",
+      "C    168\n",
+      "Q     77\n",
+      "Name: Embarked, dtype: int64\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(train_df['Embarked'].value_counts())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "<matplotlib.axes._subplots.AxesSubplot at 0x1dcfa860>"
+      ]
+     },
+     "execution_count": 13,
+     "metadata": {},
+     "output_type": "execute_result"
+    },
+    {
+     "data": {
+      "image/png": "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\n",
+      "text/plain": [
+       "<Figure size 432x288 with 1 Axes>"
+      ]
+     },
+     "metadata": {
+      "needs_background": "light"
+     },
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "sns.countplot(x='Embarked',data=train_df)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "The most common boarding port of embarkation is S.\n"
+     ]
+    }
+   ],
+   "source": [
+    "print('The most common boarding port of embarkation is %s.' %train_df['Embarked'].value_counts().idxmax())"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "<b>Final Adjustments to Data (Train & Test)</b>"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "train_data = train_df.copy()\n",
+    "train_data[\"Age\"].fillna(train_df[\"Age\"].median(skipna=True),inplace=True)\n",
+    "train_data[\"Embarked\"].fillna(train_df['Embarked'].value_counts().idxmax(), inplace=True)\n",
+    "train_data.drop('Cabin', axis=1, inplace=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "PassengerId    0\n",
+       "Survived       0\n",
+       "Pclass         0\n",
+       "Name           0\n",
+       "Sex            0\n",
+       "Age            0\n",
+       "SibSp          0\n",
+       "Parch          0\n",
+       "Ticket         0\n",
+       "Fare           0\n",
+       "Embarked       0\n",
+       "dtype: int64"
+      ]
+     },
+     "execution_count": 16,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train_data.isnull().sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "## Create categorical variable for traveling alone\n",
+    "train_data['TravelAlone']=np.where((train_data[\"SibSp\"]+train_data[\"Parch\"])>0, 0, 1)\n",
+    "train_data.drop('SibSp', axis=1, inplace=True)\n",
+    "train_data.drop('Parch', axis=1, inplace=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "<class 'pandas.core.frame.DataFrame'>\n",
+      "RangeIndex: 891 entries, 0 to 890\n",
+      "Data columns (total 10 columns):\n",
+      "PassengerId    891 non-null int64\n",
+      "Survived       891 non-null int64\n",
+      "Pclass         891 non-null int64\n",
+      "Name           891 non-null object\n",
+      "Sex            891 non-null object\n",
+      "Age            891 non-null float64\n",
+      "Ticket         891 non-null object\n",
+      "Fare           891 non-null float64\n",
+      "Embarked       891 non-null object\n",
+      "TravelAlone    891 non-null int32\n",
+      "dtypes: float64(2), int32(1), int64(3), object(4)\n",
+      "memory usage: 66.2+ KB\n"
+     ]
+    }
+   ],
+   "source": [
+    "train_data.info()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 19,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Survived</th>\n",
+       "      <th>Age</th>\n",
+       "      <th>Fare</th>\n",
+       "      <th>TravelAlone</th>\n",
+       "      <th>Pclass_1</th>\n",
+       "      <th>Pclass_2</th>\n",
+       "      <th>Pclass_3</th>\n",
+       "      <th>Embarked_C</th>\n",
+       "      <th>Embarked_Q</th>\n",
+       "      <th>Embarked_S</th>\n",
+       "      <th>Sex_male</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>0</td>\n",
+       "      <td>22.0</td>\n",
+       "      <td>7.2500</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>1</td>\n",
+       "      <td>38.0</td>\n",
+       "      <td>71.2833</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>1</td>\n",
+       "      <td>26.0</td>\n",
+       "      <td>7.9250</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>1</td>\n",
+       "      <td>35.0</td>\n",
+       "      <td>53.1000</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>0</td>\n",
+       "      <td>35.0</td>\n",
+       "      <td>8.0500</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   Survived   Age     Fare  TravelAlone  Pclass_1  Pclass_2  Pclass_3  \\\n",
+       "0         0  22.0   7.2500            0         0         0         1   \n",
+       "1         1  38.0  71.2833            0         1         0         0   \n",
+       "2         1  26.0   7.9250            1         0         0         1   \n",
+       "3         1  35.0  53.1000            0         1         0         0   \n",
+       "4         0  35.0   8.0500            1         0         0         1   \n",
+       "\n",
+       "   Embarked_C  Embarked_Q  Embarked_S  Sex_male  \n",
+       "0           0           0           1         1  \n",
+       "1           1           0           0         0  \n",
+       "2           0           0           1         0  \n",
+       "3           0           0           1         0  \n",
+       "4           0           0           1         1  "
+      ]
+     },
+     "execution_count": 19,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#create categorical variables and drop some variables\n",
+    "training=pd.get_dummies(train_data, columns=[\"Pclass\",\"Embarked\",\"Sex\"])\n",
+    "training.drop('Sex_female', axis=1, inplace=True)\n",
+    "training.drop('PassengerId', axis=1, inplace=True)\n",
+    "training.drop('Name', axis=1, inplace=True)\n",
+    "training.drop('Ticket', axis=1, inplace=True)\n",
+    "\n",
+    "final_train = training\n",
+    "final_train.head()\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 20,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "<class 'pandas.core.frame.DataFrame'>\n",
+      "RangeIndex: 891 entries, 0 to 890\n",
+      "Data columns (total 11 columns):\n",
+      "Survived       891 non-null int64\n",
+      "Age            891 non-null float64\n",
+      "Fare           891 non-null float64\n",
+      "TravelAlone    891 non-null int32\n",
+      "Pclass_1       891 non-null uint8\n",
+      "Pclass_2       891 non-null uint8\n",
+      "Pclass_3       891 non-null uint8\n",
+      "Embarked_C     891 non-null uint8\n",
+      "Embarked_Q     891 non-null uint8\n",
+      "Embarked_S     891 non-null uint8\n",
+      "Sex_male       891 non-null uint8\n",
+      "dtypes: float64(2), int32(1), int64(1), uint8(7)\n",
+      "memory usage: 30.5 KB\n"
+     ]
+    }
+   ],
+   "source": [
+    "training.info()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "\n",
+    "<b>Now, apply the same changes to the test data.</b>"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 21,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "PassengerId      0\n",
+       "Pclass           0\n",
+       "Name             0\n",
+       "Sex              0\n",
+       "Age             86\n",
+       "SibSp            0\n",
+       "Parch            0\n",
+       "Ticket           0\n",
+       "Fare             1\n",
+       "Cabin          327\n",
+       "Embarked         0\n",
+       "dtype: int64"
+      ]
+     },
+     "execution_count": 21,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "test_df.isnull().sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 22,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Age</th>\n",
+       "      <th>Fare</th>\n",
+       "      <th>TravelAlone</th>\n",
+       "      <th>Pclass_1</th>\n",
+       "      <th>Pclass_2</th>\n",
+       "      <th>Pclass_3</th>\n",
+       "      <th>Embarked_C</th>\n",
+       "      <th>Embarked_Q</th>\n",
+       "      <th>Embarked_S</th>\n",
+       "      <th>Sex_male</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>34.5</td>\n",
+       "      <td>7.8292</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>47.0</td>\n",
+       "      <td>7.0000</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>62.0</td>\n",
+       "      <td>9.6875</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>27.0</td>\n",
+       "      <td>8.6625</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>22.0</td>\n",
+       "      <td>12.2875</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "    Age     Fare  TravelAlone  Pclass_1  Pclass_2  Pclass_3  Embarked_C  \\\n",
+       "0  34.5   7.8292            1         0         0         1           0   \n",
+       "1  47.0   7.0000            0         0         0         1           0   \n",
+       "2  62.0   9.6875            1         0         1         0           0   \n",
+       "3  27.0   8.6625            1         0         0         1           0   \n",
+       "4  22.0  12.2875            0         0         0         1           0   \n",
+       "\n",
+       "   Embarked_Q  Embarked_S  Sex_male  \n",
+       "0           1           0         1  \n",
+       "1           0           1         0  \n",
+       "2           1           0         1  \n",
+       "3           0           1         1  \n",
+       "4           0           1         0  "
+      ]
+     },
+     "execution_count": 22,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "test_data = test_df.copy()\n",
+    "test_data[\"Age\"].fillna(train_df[\"Age\"].median(skipna=True), inplace=True)\n",
+    "test_data[\"Fare\"].fillna(train_df[\"Fare\"].median(skipna=True), inplace=True)\n",
+    "test_data.drop('Cabin', axis=1, inplace=True)\n",
+    "\n",
+    "test_data['TravelAlone']=np.where((test_data[\"SibSp\"]+test_data[\"Parch\"])>0, 0, 1)\n",
+    "\n",
+    "test_data.drop('SibSp', axis=1, inplace=True)\n",
+    "test_data.drop('Parch', axis=1, inplace=True)\n",
+    "\n",
+    "testing = pd.get_dummies(test_data, columns=[\"Pclass\",\"Embarked\",\"Sex\"])\n",
+    "testing.drop('Sex_female', axis=1, inplace=True)\n",
+    "testing.drop('PassengerId', axis=1, inplace=True)\n",
+    "testing.drop('Name', axis=1, inplace=True)\n",
+    "testing.drop('Ticket', axis=1, inplace=True)\n",
+    "\n",
+    "final_test = testing\n",
+    "final_test.head()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "<b>Exploratory Data Analysis</b>"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Exploration of Passenger Class"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 23,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "<matplotlib.axes._subplots.AxesSubplot at 0x1dd8f1d0>"
+      ]
+     },
+     "execution_count": 23,
+     "metadata": {},
+     "output_type": "execute_result"
+    },
+    {
+     "data": {
+      "image/png": "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\n",
+      "text/plain": [
+       "<Figure size 432x288 with 1 Axes>"
+      ]
+     },
+     "metadata": {
+      "needs_background": "light"
+     },
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "sns.barplot('Pclass','Survived',data=train_df, color=\"darkturquoise\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Unsurprisingly, being a first class passenger was safest"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Exploration of Embarked Port"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 25,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "image/png": "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\n",
+      "text/plain": [
+       "<Figure size 432x288 with 1 Axes>"
+      ]
+     },
+     "metadata": {
+      "needs_background": "light"
+     },
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "sns.barplot('Embarked', 'Survived', data=train_df, color=\"teal\")\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Passengers who boarded in Cherbourg, France, appear to have the highest survival rate. "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 26,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "image/png": "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\n",
+      "text/plain": [
+       "<Figure size 432x288 with 1 Axes>"
+      ]
+     },
+     "metadata": {
+      "needs_background": "light"
+     },
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "sns.barplot('TravelAlone', 'Survived', data=final_train, color=\"mediumturquoise\")\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 28,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Index(['Survived', 'Age', 'Fare', 'TravelAlone', 'Pclass_1', 'Pclass_2',\n",
+       "       'Pclass_3', 'Embarked_C', 'Embarked_Q', 'Embarked_S', 'Sex_male'],\n",
+       "      dtype='object')"
+      ]
+     },
+     "execution_count": 28,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "final_train.columns"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "<b>Feature selection</b>"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 34,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Selected features: ['TravelAlone', 'Pclass_1', 'Pclass_2', 'Pclass_3', 'Embarked_C', 'Embarked_Q', 'Embarked_S', 'Sex_male']\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n"
+     ]
+    }
+   ],
+   "source": [
+    "from sklearn.linear_model import LogisticRegression\n",
+    "from sklearn.feature_selection import RFE\n",
+    "\n",
+    "cols = ['Age', 'Fare', 'TravelAlone', 'Pclass_1', 'Pclass_2',\n",
+    "       'Pclass_3', 'Embarked_C', 'Embarked_Q', 'Embarked_S', 'Sex_male'] \n",
+    "X = final_train[cols]\n",
+    "y = final_train['Survived']\n",
+    "# Build a logreg and compute the feature importances\n",
+    "model = LogisticRegression()\n",
+    "# create the RFE model and select 8 attributes\n",
+    "rfe = RFE(model, 8)\n",
+    "rfe = rfe.fit(X, y)\n",
+    "# summarize the selection of the attributes\n",
+    "print('Selected features: %s' % list(X.columns[rfe.support_]))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 35,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n",
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "RFECV(cv=10,\n",
+       "   estimator=LogisticRegression(C=1.0, class_weight=None, dual=False, fit_intercept=True,\n",
+       "          intercept_scaling=1, max_iter=100, multi_class='warn',\n",
+       "          n_jobs=None, penalty='l2', random_state=None, solver='warn',\n",
+       "          tol=0.0001, verbose=0, warm_start=False),\n",
+       "   min_features_to_select=1, n_jobs=None, scoring='accuracy', step=1,\n",
+       "   verbose=0)"
+      ]
+     },
+     "execution_count": 35,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "\n",
+    "\n",
+    "from sklearn.feature_selection import RFECV\n",
+    "# Create the RFE object and compute a cross-validated score.\n",
+    "# The \"accuracy\" scoring is proportional to the number of correct classifications\n",
+    "rfecv = RFECV(estimator=LogisticRegression(), step=1, cv=10, scoring='accuracy')\n",
+    "rfecv.fit(X, y)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 37,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Optimal number of features: 9\n",
+      "Selected features: ['Age', 'TravelAlone', 'Pclass_1', 'Pclass_2', 'Pclass_3', 'Embarked_C', 'Embarked_Q', 'Embarked_S', 'Sex_male']\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(\"Optimal number of features: %d\" % rfecv.n_features_)\n",
+    "print('Selected features: %s' % list(X.columns[rfecv.support_]))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 40,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "image/png": "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\n",
+      "text/plain": [
+       "<Figure size 720x432 with 1 Axes>"
+      ]
+     },
+     "metadata": {
+      "needs_background": "light"
+     },
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "# Plot number of features VS. cross-validation scores\n",
+    "plt.figure(figsize=(10,6))\n",
+    "plt.xlabel(\"Number of features selected\")\n",
+    "plt.ylabel(\"Cross validation score (nb of correct classifications)\")\n",
+    "plt.plot(range(1, len(rfecv.grid_scores_) + 1), rfecv.grid_scores_)\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Model evaluation based on simple train/test split using train_test_split() function"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 44,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from sklearn.model_selection import train_test_split, cross_val_score\n",
+    "from sklearn.metrics import accuracy_score, classification_report, precision_score, recall_score \n",
+    "from sklearn.metrics import confusion_matrix, precision_recall_curve, roc_curve, auc, log_loss"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 45,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "Selected_features=['Age', 'TravelAlone', 'Pclass_1', 'Pclass_2', 'Pclass_3', 'Embarked_C', 'Embarked_Q', 'Embarked_S', 'Sex_male']\n",
+    "X = final_train[Selected_features]\n",
+    "y = final_train['Survived']"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 47,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "C:\\Users\\amitks\\AppData\\Local\\Continuum\\anaconda3\\lib\\site-packages\\sklearn\\linear_model\\logistic.py:433: FutureWarning: Default solver will be changed to 'lbfgs' in 0.22. Specify a solver to silence this warning.\n",
+      "  FutureWarning)\n"
+     ]
+    }
+   ],
+   "source": [
+    "X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=2)\n",
+    "\n",
+    "# check classification scores of logistic regression\n",
+    "logreg = LogisticRegression()\n",
+    "logreg.fit(X_train, y_train)\n",
+    "y_pred = logreg.predict(X_test)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 48,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "LogisticRegression accuracy is 0.782\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(logreg.__class__.__name__+\" accuracy is %2.3f\" % accuracy_score(y_test, y_pred))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.7.3"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}
